@@ -1,0 +1,18 @@
+repos:
+  # Ruffなどは通常の隔離環境（pre-commit）として設定
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.5
+    hooks:
+      - id: ruff-check
+        args: [ --fix ]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: pyright
+        name: Run Pyright
+        entry: uv run pyright
+        language: system
+        types: [python]
+        stages: [pre-push]
+        pass_filenames: false
