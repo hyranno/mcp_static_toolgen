@@ -123,9 +123,9 @@ def main() -> None:
         ),
     ]
 
-    template_data = parse_mcp_tools(mock_mcp_response)
+    parsed_tools = parse_mcp_tools(mock_mcp_response)
 
-    formatted_code = generate_tool_code(template_data)
+    formatted_code = generate_tool_code(parsed_tools)
 
     output_path = "generated_mcp_tools.py"
     with open(output_path, "w") as f:

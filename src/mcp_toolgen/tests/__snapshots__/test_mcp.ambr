@@ -1,0 +1,135 @@
+# serializer version: 1
+# name: test_mcp_tool_generation
+  '''
+  # --- This is auto-generated code (DO NOT EDIT) ---
+  import asyncio
+  from collections.abc import AsyncIterator
+  from typing import TypedDict
+  
+  from langchain_core.tools import BaseTool
+  from mcp import ClientSession
+  from pydantic import BaseModel, Field
+  
+  from mcp_toolgen.runtime.langchain import dump_safe_result, parse_result
+  
+  
+  # --- read_file ---
+  class ReadFileInput(BaseModel):
+      path: str = Field(..., description="Path to the file")
+  
+  
+  class ReadFileOutput(BaseModel):
+      content: str = Field(..., description="Content of the file")
+  
+  
+  class ReadFileTool(BaseTool):
+      name: str = "read_file"
+      description: str = "Read the complete contents of a file."
+      args_schema = ReadFileInput
+      mcp_client_sessions: AsyncIterator[ClientSession] = Field(exclude=True)
+  
+      def _run(
+          self,
+          path: str,
+      ) -> ReadFileOutput:
+          return asyncio.run(self._arun(path))
+  
+      async def _arun(
+          self,
+          path: str,
+      ) -> ReadFileOutput:
+          kwargs = {
+              "path": path,
+          }
+          # remove None values
+          kwargs = {
+              k: v
+              for k, v in kwargs.items()
+              if v is not None  # pyright: ignore [reportUnnecessaryComparison]
+          }
+          session = await self.mcp_client_sessions.__anext__()
+          result = await session.call_tool("read_file", kwargs)
+  
+          if result.isError:
+              error_msg = dump_safe_result(result)
+              raise RuntimeError(f"Tool execution failed: {error_msg}")
+          return parse_result(ReadFileOutput, result)
+  
+  
+  # --- write_file ---
+  class WriteFileInput(BaseModel):
+      path: str = Field(..., description="Path to the file")
+      content: str = Field(..., description="Content to write")
+      append: bool | None = Field(
+          default=None, description="If true, append instead of overwrite"
+      )
+      pass
+  
+  
+  class WriteFileTool(BaseTool):
+      name: str = "write_file"
+      description: str = "Write content to a file."
+      args_schema = WriteFileInput
+      mcp_client_sessions: AsyncIterator[ClientSession] = Field(exclude=True)
+  
+      def _run(
+          self,
+          path: str,
+          content: str,
+          append: bool | None,
+      ) -> str:
+          return asyncio.run(self._arun(path, content, append))
+  
+      async def _arun(
+          self,
+          path: str,
+          content: str,
+          append: bool | None,
+      ) -> str:
+          kwargs = {
+              "path": path,
+              "content": content,
+              "append": append,
+          }
+          # remove None values
+          kwargs = {
+              k: v
+              for k, v in kwargs.items()
+              if v is not None  # pyright: ignore [reportUnnecessaryComparison]
+          }
+          session = await self.mcp_client_sessions.__anext__()
+          result = await session.call_tool("write_file", kwargs)
+  
+          if result.isError:
+              error_msg = dump_safe_result(result)
+              raise RuntimeError(f"Tool execution failed: {error_msg}")
+          return dump_safe_result(result)
+  
+  
+  # --- Factory & TypedDict ---
+  class Tools(TypedDict):
+      read_file: ReadFileTool
+      write_file: WriteFileTool
+  
+  
+  def get_mcp_tools(mcp_client_sessions: AsyncIterator[ClientSession]) -> Tools:
+      return {
+          "read_file": ReadFileTool(mcp_client_sessions=mcp_client_sessions),
+          "write_file": WriteFileTool(mcp_client_sessions=mcp_client_sessions),
+      }
+  
+  '''
+# ---
+# name: test_parse_mcp_io_schema
+  dict({
+    'append': ParsedProperty(python_type='bool', description='If true, append instead of overwrite', required=False),
+    'content': ParsedProperty(python_type='str', description='Content to write', required=True),
+    'path': ParsedProperty(python_type='str', description='Path to the file', required=True),
+  })
+# ---
+# name: test_parse_mcp_tools
+  list([
+    ParsedTool(name='read_file', class_name='ReadFile', description='Read the complete contents of a file.', input_props={'path': ParsedProperty(python_type='str', description='Path to the file', required=True)}, output_props={'content': ParsedProperty(python_type='str', description='Content of the file', required=True)}),
+    ParsedTool(name='write_file', class_name='WriteFile', description='Write content to a file.', input_props={'path': ParsedProperty(python_type='str', description='Path to the file', required=True), 'content': ParsedProperty(python_type='str', description='Content to write', required=True), 'append': ParsedProperty(python_type='bool', description='If true, append instead of overwrite', required=False)}, output_props=None),
+  ])
+# ---
