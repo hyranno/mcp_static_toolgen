@@ -15,6 +15,7 @@
 				"ms-python.vscode-pylance",
 				"charliermarsh.ruff",
 				"samuelcolvin.jinjahtml",
+				"tamasfe.even-better-toml",
 				"eamodio.gitlens"
 			]
 		}
