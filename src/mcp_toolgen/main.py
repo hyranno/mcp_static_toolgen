@@ -91,6 +91,12 @@ def generate_tool_code(tools: list[ParsedTool]) -> str:
     return formatted_code
 
 
+async def fetch_and_generate_code(session: ClientSession) -> str:
+    tools = await fetch_mcp_tools(session)
+    parsed_tools = parse_mcp_tools(tools)
+    return generate_tool_code(parsed_tools)
+
+
 def main() -> None:
     mock_mcp_response: list[Tool] = [
         Tool(
