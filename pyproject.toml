@@ -1,7 +1,7 @@
 [project]
 name = "mcp_toolgen"
 version = "0.1.0"
-description = "Add your description here"
+description = "Static binding code generator for MCP tools"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
