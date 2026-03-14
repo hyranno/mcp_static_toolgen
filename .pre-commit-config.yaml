@@ -15,3 +15,13 @@ repos:
         types: [python]
         stages: [pre-push]
         pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run Pytest
+        entry: uv run pytest
+        language: system
+        types: [python]
+        stages: [push]
+        pass_filenames: false
