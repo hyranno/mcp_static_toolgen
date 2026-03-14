@@ -3,6 +3,7 @@ from typing import Any
 
 import black
 from jinja2 import Environment, PackageLoader
+from mcp import ClientSession
 from mcp.types import Tool
 
 
@@ -35,6 +36,11 @@ def map_json_type_to_python(json_type: str) -> str:
         "object": "dict",
     }
     return mapping.get(json_type, "Any")
+
+
+async def fetch_mcp_tools(session: ClientSession) -> list[Tool]:
+    tools_list = await session.list_tools()
+    return tools_list.tools
 
 
 def parse_mcp_tools(mcp_tools: list[Tool]) -> list[ParsedTool]:

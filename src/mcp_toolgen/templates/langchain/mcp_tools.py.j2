@@ -32,8 +32,6 @@ class {{ tool.class_name }}Output(BaseModel):
         description="{{ prop.description }}"
     )
     {%- endfor %}
-{%- else %}
-    pass
 {%- endif %}
 
 class {{ tool.class_name }}Tool(BaseTool):
