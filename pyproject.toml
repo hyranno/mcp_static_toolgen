@@ -3,6 +3,7 @@ name = "mcp_toolgen"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
+license = { file = "LICENSE" }
 authors = [
     { name = "hyranno", email = "hyranno4pub@gmail.com" }
 ]
