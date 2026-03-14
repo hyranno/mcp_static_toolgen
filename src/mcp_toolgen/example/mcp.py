@@ -5,7 +5,7 @@ from pathlib import Path
 
 from langchain_mcp_adapters.sessions import Connection
 
-from mcp_toolgen.main import connect_and_generate
+from mcp_toolgen.mcp import connect_and_generate
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--output-dir", type=Path, default=Path("generated"))

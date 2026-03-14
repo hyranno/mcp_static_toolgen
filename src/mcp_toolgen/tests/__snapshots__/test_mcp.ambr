@@ -244,12 +244,12 @@
   
     ''',
     'parsed_tools': list([
-      ParsedTool(name='read_file', class_name='ReadFile', description='Read the complete contents of a file.', input_props={'path': ParsedProperty(python_type='str', description='Path to the file', required=True)}, output_props={'content': ParsedProperty(python_type='str', description='Content of the file', required=True)}),
-      ParsedTool(name='write_file', class_name='WriteFile', description='Write content to a file.', input_props={'path': ParsedProperty(python_type='str', description='Path to the file', required=True), 'content': ParsedProperty(python_type='str', description='Content to write', required=True), 'append': ParsedProperty(python_type='bool', description='If true, append instead of overwrite', required=False)}, output_props=None),
+      ParsedMCPTool(name='read_file', class_name='ReadFile', description='Read the complete contents of a file.', input_props={'path': ParsedProperty(python_type='str', description='Path to the file', required=True)}, output_props={'content': ParsedProperty(python_type='str', description='Content of the file', required=True)}),
+      ParsedMCPTool(name='write_file', class_name='WriteFile', description='Write content to a file.', input_props={'path': ParsedProperty(python_type='str', description='Path to the file', required=True), 'content': ParsedProperty(python_type='str', description='Content to write', required=True), 'append': ParsedProperty(python_type='bool', description='If true, append instead of overwrite', required=False)}, output_props=None),
     ]),
   })
 # ---
-# name: test_parse_mcp_io_schema
+# name: test_parse_io_schema
   dict({
     'append': ParsedProperty(python_type='bool', description='If true, append instead of overwrite', required=False),
     'content': ParsedProperty(python_type='str', description='Content to write', required=True),

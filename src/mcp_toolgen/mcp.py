@@ -8,60 +8,37 @@ from langchain_mcp_adapters.sessions import Connection
 from mcp import ClientSession
 from mcp.types import Tool
 
+from mcp_toolgen.common import (
+    ParsedProperty,
+    ParsedTool,
+    ToolTarget,
+    map_json_type_to_python,
+)
+
 warnings.filterwarnings("ignore", message=".*Pydantic V1 functionality.*")
 from langchain_mcp_adapters.client import MultiServerMCPClient  # noqa: E402
 
 
 @dataclass
-class ParsedProperty:
-    python_type: str
-    description: str
-    required: bool
-
-
-@dataclass
-class ParsedTool:
-    name: str
-    class_name: str
-    description: str
-    input_props: dict[str, ParsedProperty]
-    output_props: dict[str, ParsedProperty] | None
+class ParsedMCPTool(ParsedTool):
+    pass
 
 
 env = Environment(loader=PackageLoader(__name__, "templates"))
 
 
-def map_json_type_to_python(json_type: str) -> str:
-    mapping = {
-        "string": "str",
-        "integer": "int",
-        "number": "float",
-        "boolean": "bool",
-        "array": "list",
-        "object": "dict",
-    }
-    return mapping.get(json_type, "Any")
-
-
-async def fetch_mcp_tools(session: ClientSession) -> list[Tool]:
-    tools_list = await session.list_tools()
-    return tools_list.tools
-
-
-def parse_mcp_tools(mcp_tools: list[Tool]) -> list[ParsedTool]:
+def parse_tools(mcp_tools: list[Tool]) -> list[ParsedMCPTool]:
     """Convert MCP tool definitions into a internal representation."""
-    parsed_tools: list[ParsedTool] = []
+    parsed_tools: list[ParsedMCPTool] = []
 
     for tool in mcp_tools:
         # tool_name -> ToolName
         class_name = "".join(word.capitalize() for word in tool.name.split("_"))
-        input_props = parse_mcp_io_schema(tool.inputSchema)
-        output_props = (
-            parse_mcp_io_schema(tool.outputSchema) if tool.outputSchema else None
-        )
+        input_props = parse_io_schema(tool.inputSchema)
+        output_props = parse_io_schema(tool.outputSchema) if tool.outputSchema else None
 
         parsed_tools.append(
-            ParsedTool(
+            ParsedMCPTool(
                 name=tool.name,
                 class_name=class_name,
                 description=tool.description or "",
@@ -73,7 +50,7 @@ def parse_mcp_tools(mcp_tools: list[Tool]) -> list[ParsedTool]:
     return parsed_tools
 
 
-def parse_mcp_io_schema(
+def parse_io_schema(
     schema: dict[str, Any],
 ) -> dict[str, ParsedProperty]:
     properties = schema.get("properties", {})
@@ -89,25 +66,30 @@ def parse_mcp_io_schema(
     return parsed_props
 
 
-def generate_tool_code(tools: list[ParsedTool]) -> str:
-    template = env.get_template("langchain/mcp_tools.py.j2")
+def generate_tool_code(
+    tools: list[ParsedMCPTool], target: ToolTarget = "langchain"
+) -> str:
+    template = env.get_template(f"{target}/mcp_tools.py.j2")
     raw_python_code = template.render(tools=tools)
     formatted_code = black.format_str(raw_python_code, mode=black.Mode())
     return formatted_code
 
 
-async def fetch_and_generate_code(session: ClientSession) -> str:
-    tools = await fetch_mcp_tools(session)
-    parsed_tools = parse_mcp_tools(tools)
-    return generate_tool_code(parsed_tools)
+async def fetch_tools(session: ClientSession) -> list[Tool]:
+    tools_list = await session.list_tools()
+    return tools_list.tools
 
 
-async def connect_and_generate(connections: dict[str, Connection]) -> dict[str, str]:
+async def connect_and_generate(
+    connections: dict[str, Connection], target: ToolTarget = "langchain"
+) -> dict[str, str]:
     results: dict[str, str] = {}
     client = MultiServerMCPClient(connections)
     for name, _ in connections.items():
         async with client.session(name) as session:
             await session.initialize()
-            code = await fetch_and_generate_code(session)
+            tools = await fetch_tools(session)
+            parsed_tools = parse_tools(tools)
+            code = generate_tool_code(parsed_tools, target)
             results[name] = code
     return results
