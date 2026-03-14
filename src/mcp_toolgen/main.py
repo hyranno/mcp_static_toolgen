@@ -1,10 +1,15 @@
+import warnings
 from dataclasses import dataclass
 from typing import Any
 
 import black
 from jinja2 import Environment, PackageLoader
+from langchain_mcp_adapters.sessions import Connection
 from mcp import ClientSession
 from mcp.types import Tool
+
+warnings.filterwarnings("ignore", message=".*Pydantic V1 functionality.*")
+from langchain_mcp_adapters.client import MultiServerMCPClient  # noqa: E402
 
 
 @dataclass
@@ -95,6 +100,17 @@ async def fetch_and_generate_code(session: ClientSession) -> str:
     tools = await fetch_mcp_tools(session)
     parsed_tools = parse_mcp_tools(tools)
     return generate_tool_code(parsed_tools)
+
+
+async def connect_and_generate(connections: dict[str, Connection]) -> dict[str, str]:
+    results: dict[str, str] = {}
+    client = MultiServerMCPClient(connections)
+    for name, _ in connections.items():
+        async with client.session(name) as session:
+            await session.initialize()
+            code = await fetch_and_generate_code(session)
+            results[name] = code
+    return results
 
 
 def main() -> None:

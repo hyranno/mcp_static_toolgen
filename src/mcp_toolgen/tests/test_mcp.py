@@ -1,18 +1,20 @@
 import asyncio
+import warnings
 from typing import TypedDict
 
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
 from mcp.types import Tool
 
 from mcp_toolgen.main import (
     ParsedProperty,
     ParsedTool,
-    fetch_mcp_tools,
+    connect_and_generate,
     generate_tool_code,
     parse_mcp_io_schema,
     parse_mcp_tools,
 )
+
+warnings.filterwarnings("ignore", message=".*Pydantic V1 functionality.*")
+from langchain_mcp_adapters.sessions import Connection  # noqa: E402
 
 mock_mcp_response: list[Tool] = [
     Tool(
@@ -52,23 +54,6 @@ mock_mcp_response: list[Tool] = [
 ]
 
 
-def get_mcp_tools_from_server() -> list[Tool]:
-    """Connect to the MCP server and retrieve the list of tools."""
-    server_params = StdioServerParameters(
-        command="python",
-        args=["src/mcp_toolgen/tests/mock_mcp_server.py"],
-    )
-
-    async def fetch_tools(server_params: StdioServerParameters) -> list[Tool]:
-        async with stdio_client(server_params) as (read, write):
-            async with ClientSession(read, write) as session:
-                await session.initialize()
-                tools = await fetch_mcp_tools(session)
-                return tools
-
-    return asyncio.run(fetch_tools(server_params))
-
-
 def test_parse_mcp_io_schema(snapshot: dict[str, ParsedProperty]) -> None:
     tool = mock_mcp_response[1]
     parsed_input_schema = parse_mcp_io_schema(tool.inputSchema)
@@ -81,15 +66,7 @@ class GenerationSnapshot(TypedDict):
 
 
 def test_generation_from_mock_tools(snapshot: GenerationSnapshot) -> None:
-    assert_generation(mock_mcp_response, snapshot)
-
-
-def test_generation_from_fetched_tools(snapshot: GenerationSnapshot) -> None:
-    tools = get_mcp_tools_from_server()
-    assert_generation(tools, snapshot)
-
-
-def assert_generation(tools: list[Tool], snapshot: GenerationSnapshot) -> None:
+    tools = mock_mcp_response
     parsed_tools = parse_mcp_tools(tools)
     generated_code = generate_tool_code(parsed_tools)
 
@@ -98,3 +75,16 @@ def assert_generation(tools: list[Tool], snapshot: GenerationSnapshot) -> None:
         "generated_code": generated_code,
     }
     assert actual == snapshot
+
+
+def test_connect_and_generation(snapshot: str) -> None:
+    connections: dict[str, Connection] = {
+        "mock": {
+            "transport": "stdio",
+            "command": "python",
+            "args": ["src/mcp_toolgen/tests/mock_mcp_server.py"],
+        },
+    }
+    generated_code = asyncio.run(connect_and_generate(connections))["mock"]
+
+    assert generated_code == snapshot
