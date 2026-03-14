@@ -6,7 +6,10 @@
 	"overrideCommand": true,
 	"features": {
 		"ghcr.io/devcontainers/features/git:1": {},
-		"ghcr.io/devcontainers-extra/features/uv:1": {}
+		"ghcr.io/devcontainers-extra/features/uv:1": {},
+		"ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+        "packages": "libatomic1"
+    }
 	},
 	"customizations": {
 		"vscode": {
