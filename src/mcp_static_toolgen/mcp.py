@@ -8,7 +8,7 @@ from langchain_mcp_adapters.sessions import Connection
 from mcp import ClientSession
 from mcp.types import Tool
 
-from mcp_toolgen.common import (
+from mcp_static_toolgen.common import (
     ParsedProperty,
     ParsedTool,
     ToolTarget,
