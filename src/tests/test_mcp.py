@@ -82,7 +82,7 @@ def test_connect_and_generation(snapshot: str) -> None:
         "mock": {
             "transport": "stdio",
             "command": "python",
-            "args": ["src/mcp_static_toolgen/tests/mock_mcp_server.py"],
+            "args": ["src/tests/mock_mcp_server.py"],
         },
     }
     generated_code = asyncio.run(connect_and_generate(connections))["mock"]

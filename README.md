@@ -30,7 +30,7 @@ connections: dict[str, Connection] = {
     "mock": {
         "transport": "stdio",
         "command": "python",
-        "args": ["src/mcp_static_toolgen/tests/mock_mcp_server.py"],
+        "args": ["src/tests/mock_mcp_server.py"],
     },
 }
 generated_codes = asyncio.run(connect_and_generate(connections))
