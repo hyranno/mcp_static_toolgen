@@ -1,11 +1,19 @@
 [project]
-name = "mcp_toolgen"
-version = "0.1.0"
+name = "mcp_static_toolgen"
+version = "0.0.0"   # placeholder, will be set by CI
 description = "Static binding code generator for MCP tools"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
     { name = "hyranno", email = "hyranno4pub@gmail.com" }
+]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "tool-generation",
+    "code-generation",
+    "llm-tools",
+    "pydantic",
 ]
 requires-python = ">=3.14"
 dependencies = [

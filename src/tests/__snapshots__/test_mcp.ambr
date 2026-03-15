@@ -10,7 +10,7 @@
   from mcp import ClientSession
   from pydantic import BaseModel, Field
   
-  from mcp_toolgen.runtime.langchain import dump_safe_result, parse_result
+  from mcp_static_toolgen.runtime.langchain import dump_safe_result, parse_result
   
   
   # --- read_file ---
@@ -135,7 +135,7 @@
       from mcp import ClientSession
       from pydantic import BaseModel, Field
       
-      from mcp_toolgen.runtime.langchain import dump_safe_result, parse_result
+      from mcp_static_toolgen.runtime.langchain import dump_safe_result, parse_result
       
       
       # --- read_file ---
