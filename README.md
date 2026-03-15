@@ -1,4 +1,4 @@
-# MCP-Toolgen
+# MCP-Static-Toolgen
 
 Static binding code generator for MCP tools.
 
