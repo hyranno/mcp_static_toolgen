@@ -1,6 +1,5 @@
 [project]
 name = "mcp_static_toolgen"
-version = "0.0.0"   # placeholder, will be set by CI
 description = "Static binding code generator for MCP tools"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -15,6 +14,7 @@ keywords = [
     "llm-tools",
     "pydantic",
 ]
+dynamic = ["version"]
 requires-python = ">=3.14"
 dependencies = [
     "black>=26.3.0",
@@ -36,8 +36,11 @@ dev = [
 ]
 
 [build-system]
-requires = ["uv_build>=0.10.9,<0.11.0"]
-build-backend = "uv_build"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
 
 [tool.pyright]
 include = ["src"]
