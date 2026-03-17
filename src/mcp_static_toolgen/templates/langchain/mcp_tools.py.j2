@@ -1,76 +1,51 @@
 # --- This is auto-generated code (DO NOT EDIT) ---
 import asyncio
 from collections.abc import AsyncIterator
-from typing import TypedDict
+from typing import TypedDict, Unpack
 
 from langchain_core.tools import BaseTool
 from mcp import ClientSession
 from pydantic import BaseModel, Field
 
+from mcp_static_toolgen.runtime.common import create_model_from_typeddict
 from mcp_static_toolgen.runtime.langchain import dump_safe_result, parse_result
 
 
 {% for tool in tools %}
-# --- {{ tool.name }} ---
-class {{ tool.class_name }}Input(BaseModel):
-{%- if tool.input_props %}
-    {%- for prop_name, prop in tool.input_props.items() %}
-    {{ prop_name }}: {% if not prop.required %}{{ prop.python_type }} | None{% else %}{{ prop.python_type }}{% endif %} = Field(
-        {% if prop.required %}...{% else %}default=None{% endif %}, 
-        description="{{ prop.description }}"
-    )
-    {%- endfor %}
-{%- else %}
-    pass
-{%- endif %}
+{{ tool.input_schema_dict }}
 
-{%- if tool.output_props %}
-class {{ tool.class_name }}Output(BaseModel):
-    {%- for prop_name, prop in tool.output_props.items() %}
-    {{ prop_name }}: {% if not prop.required %}{{ prop.python_type }} | None{% else %}{{ prop.python_type }}{% endif %} = Field(
-        {% if prop.required %}...{% else %}default=None{% endif %}, 
-        description="{{ prop.description }}"
-    )
-    {%- endfor %}
+{%- if tool.output_schema_model %}
+{{ tool.output_schema_model }}
 {%- endif %}
 
 class {{ tool.class_name }}Tool(BaseTool):
     name: str = "{{ tool.name }}"
     description: str = "{{ tool.description }}"
-    args_schema = {{ tool.class_name }}Input
+    args_schema = create_model_from_typeddict("{{ tool.class_name }}Input", {{ tool.class_name }}InputDict)
     mcp_client_sessions: AsyncIterator[ClientSession] = Field(exclude=True)
 
     def _run(
         self,
-        {%- for prop_name, prop in tool.input_props.items() %}
-        {{ prop_name }}: {% if not prop.required %}{{ prop.python_type }} | None{% else %}{{ prop.python_type }}{% endif %},
-        {%- endfor %}
-    ) -> {% if tool.output_props %}{{ tool.class_name }}Output{% else %}str{% endif %}:
-        return asyncio.run(self._arun({{ ', '.join(tool.input_props.keys()) }}))
+        **kwargs: Unpack[{{ tool.class_name }}InputDict],
+    ) -> {% if tool.output_schema_model %}{{ tool.class_name }}Output{% else %}str{% endif %}:
+        return asyncio.run(self._arun(**kwargs))
 
     async def _arun(
         self,
-        {%- for prop_name, prop in tool.input_props.items() %}
-        {{ prop_name }}: {% if not prop.required %}{{ prop.python_type }} | None{% else %}{{ prop.python_type }}{% endif %},
-        {%- endfor %}
-    ) -> {% if tool.output_props %}{{ tool.class_name }}Output{% else %}str{% endif %}:
-        kwargs = {
-            {%- for prop_name in tool.input_props.keys() %}
-            "{{ prop_name }}": {{ prop_name }},
-            {%- endfor %}
-        }
+        **kwargs: Unpack[{{ tool.class_name }}InputDict],
+    ) -> {% if tool.output_schema_model %}{{ tool.class_name }}Output{% else %}str{% endif %}:
         # remove None values
-        kwargs = {
+        stripped_kwargs = {
             k: v for k, v in kwargs.items() if v is not None    # pyright: ignore [reportUnnecessaryComparison]
         }
         session = await self.mcp_client_sessions.__anext__()
-        result = await session.call_tool("{{ tool.name }}", kwargs)
+        result = await session.call_tool("{{ tool.name }}", stripped_kwargs)
 
         if result.isError:
             error_msg = dump_safe_result(result)
             raise RuntimeError(f"Tool execution failed: {error_msg}")
 
-        {%- if tool.output_props %}
+        {%- if tool.output_schema_model %}
         return parse_result({{ tool.class_name }}Output, result)
         {%- else %}
         return dump_safe_result(result)
