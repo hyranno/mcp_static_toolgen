@@ -4,51 +4,62 @@
   # --- This is auto-generated code (DO NOT EDIT) ---
   import asyncio
   from collections.abc import AsyncIterator
-  from typing import TypedDict
+  from typing import TypedDict, Unpack
   
   from langchain_core.tools import BaseTool
   from mcp import ClientSession
   from pydantic import BaseModel, Field
   
+  from mcp_static_toolgen.runtime.common import create_model_from_typeddict
   from mcp_static_toolgen.runtime.langchain import dump_safe_result, parse_result
   
   
-  # --- read_file ---
-  class ReadFileInput(BaseModel):
-      path: str = Field(..., description="Path to the file")
+  from typing import TypedDict
+  
+  
+  class ReadFileInputDict(TypedDict):
+      path: str
+      """
+      Path to the file
+      """
+  
+  
+  from typing import Annotated
+  
+  from pydantic import BaseModel, Field
   
   
   class ReadFileOutput(BaseModel):
-      content: str = Field(..., description="Content of the file")
+      content: Annotated[str, Field(title="Content")]
+      """
+      Content of the file
+      """
   
   
   class ReadFileTool(BaseTool):
       name: str = "read_file"
       description: str = "Read the complete contents of a file."
-      args_schema = ReadFileInput
+      args_schema = create_model_from_typeddict("ReadFileInput", ReadFileInputDict)
       mcp_client_sessions: AsyncIterator[ClientSession] = Field(exclude=True)
   
       def _run(
           self,
-          path: str,
+          **kwargs: Unpack[ReadFileInputDict],
       ) -> ReadFileOutput:
-          return asyncio.run(self._arun(path))
+          return asyncio.run(self._arun(**kwargs))
   
       async def _arun(
           self,
-          path: str,
+          **kwargs: Unpack[ReadFileInputDict],
       ) -> ReadFileOutput:
-          kwargs = {
-              "path": path,
-          }
           # remove None values
-          kwargs = {
+          stripped_kwargs = {
               k: v
               for k, v in kwargs.items()
               if v is not None  # pyright: ignore [reportUnnecessaryComparison]
           }
           session = await self.mcp_client_sessions.__anext__()
-          result = await session.call_tool("read_file", kwargs)
+          result = await session.call_tool("read_file", stripped_kwargs)
   
           if result.isError:
               error_msg = dump_safe_result(result)
@@ -56,52 +67,57 @@
           return parse_result(ReadFileOutput, result)
   
   
-  # --- write_file ---
-  class WriteFileInput(BaseModel):
-      path: str = Field(..., description="Path to the file")
-      content: str = Field(..., description="Content to write")
-      append: str | None = Field(
-          default=None, description="If true, append instead of overwrite"
-      )
+  from typing import NotRequired, TypedDict
+  
+  
+  class WriteFileInputDict(TypedDict):
+      path: str
+      """
+      Path to the file
+      """
+      content: str
+      """
+      Content to write
+      """
+      append: NotRequired[bool | None]
+      """
+      If true, append instead of overwrite
+      """
+  
+  
+  from typing import Annotated
+  
+  from pydantic import BaseModel, Field
   
   
   class WriteFileOutput(BaseModel):
-      result: str = Field(..., description="")
+      result: Annotated[str, Field(title="Result")]
   
   
   class WriteFileTool(BaseTool):
       name: str = "write_file"
       description: str = "Write content to a file."
-      args_schema = WriteFileInput
+      args_schema = create_model_from_typeddict("WriteFileInput", WriteFileInputDict)
       mcp_client_sessions: AsyncIterator[ClientSession] = Field(exclude=True)
   
       def _run(
           self,
-          path: str,
-          content: str,
-          append: str | None,
+          **kwargs: Unpack[WriteFileInputDict],
       ) -> WriteFileOutput:
-          return asyncio.run(self._arun(path, content, append))
+          return asyncio.run(self._arun(**kwargs))
   
       async def _arun(
           self,
-          path: str,
-          content: str,
-          append: str | None,
+          **kwargs: Unpack[WriteFileInputDict],
       ) -> WriteFileOutput:
-          kwargs = {
-              "path": path,
-              "content": content,
-              "append": append,
-          }
           # remove None values
-          kwargs = {
+          stripped_kwargs = {
               k: v
               for k, v in kwargs.items()
               if v is not None  # pyright: ignore [reportUnnecessaryComparison]
           }
           session = await self.mcp_client_sessions.__anext__()
-          result = await session.call_tool("write_file", kwargs)
+          result = await session.call_tool("write_file", stripped_kwargs)
   
           if result.isError:
               error_msg = dump_safe_result(result)
@@ -129,51 +145,60 @@
       # --- This is auto-generated code (DO NOT EDIT) ---
       import asyncio
       from collections.abc import AsyncIterator
-      from typing import TypedDict
+      from typing import TypedDict, Unpack
       
       from langchain_core.tools import BaseTool
       from mcp import ClientSession
       from pydantic import BaseModel, Field
       
+      from mcp_static_toolgen.runtime.common import create_model_from_typeddict
       from mcp_static_toolgen.runtime.langchain import dump_safe_result, parse_result
       
       
-      # --- read_file ---
-      class ReadFileInput(BaseModel):
-          path: str = Field(..., description="Path to the file")
+      from typing import TypedDict
+      
+      
+      class ReadFileInputDict(TypedDict):
+          path: str
+          """
+          Path to the file
+          """
+      
+      
+      from pydantic import BaseModel
       
       
       class ReadFileOutput(BaseModel):
-          content: str = Field(..., description="Content of the file")
+          content: str
+          """
+          Content of the file
+          """
       
       
       class ReadFileTool(BaseTool):
           name: str = "read_file"
           description: str = "Read the complete contents of a file."
-          args_schema = ReadFileInput
+          args_schema = create_model_from_typeddict("ReadFileInput", ReadFileInputDict)
           mcp_client_sessions: AsyncIterator[ClientSession] = Field(exclude=True)
       
           def _run(
               self,
-              path: str,
+              **kwargs: Unpack[ReadFileInputDict],
           ) -> ReadFileOutput:
-              return asyncio.run(self._arun(path))
+              return asyncio.run(self._arun(**kwargs))
       
           async def _arun(
               self,
-              path: str,
+              **kwargs: Unpack[ReadFileInputDict],
           ) -> ReadFileOutput:
-              kwargs = {
-                  "path": path,
-              }
               # remove None values
-              kwargs = {
+              stripped_kwargs = {
                   k: v
                   for k, v in kwargs.items()
                   if v is not None  # pyright: ignore [reportUnnecessaryComparison]
               }
               session = await self.mcp_client_sessions.__anext__()
-              result = await session.call_tool("read_file", kwargs)
+              result = await session.call_tool("read_file", stripped_kwargs)
       
               if result.isError:
                   error_msg = dump_safe_result(result)
@@ -181,48 +206,48 @@
               return parse_result(ReadFileOutput, result)
       
       
-      # --- write_file ---
-      class WriteFileInput(BaseModel):
-          path: str = Field(..., description="Path to the file")
-          content: str = Field(..., description="Content to write")
-          append: bool | None = Field(
-              default=None, description="If true, append instead of overwrite"
-          )
+      from typing import NotRequired, TypedDict
+      
+      
+      class WriteFileInputDict(TypedDict):
+          path: str
+          """
+          Path to the file
+          """
+          content: str
+          """
+          Content to write
+          """
+          append: NotRequired[bool]
+          """
+          If true, append instead of overwrite
+          """
       
       
       class WriteFileTool(BaseTool):
           name: str = "write_file"
           description: str = "Write content to a file."
-          args_schema = WriteFileInput
+          args_schema = create_model_from_typeddict("WriteFileInput", WriteFileInputDict)
           mcp_client_sessions: AsyncIterator[ClientSession] = Field(exclude=True)
       
           def _run(
               self,
-              path: str,
-              content: str,
-              append: bool | None,
+              **kwargs: Unpack[WriteFileInputDict],
           ) -> str:
-              return asyncio.run(self._arun(path, content, append))
+              return asyncio.run(self._arun(**kwargs))
       
           async def _arun(
               self,
-              path: str,
-              content: str,
-              append: bool | None,
+              **kwargs: Unpack[WriteFileInputDict],
           ) -> str:
-              kwargs = {
-                  "path": path,
-                  "content": content,
-                  "append": append,
-              }
               # remove None values
-              kwargs = {
+              stripped_kwargs = {
                   k: v
                   for k, v in kwargs.items()
                   if v is not None  # pyright: ignore [reportUnnecessaryComparison]
               }
               session = await self.mcp_client_sessions.__anext__()
-              result = await session.call_tool("write_file", kwargs)
+              result = await session.call_tool("write_file", stripped_kwargs)
       
               if result.isError:
                   error_msg = dump_safe_result(result)
@@ -244,15 +269,8 @@
   
     ''',
     'parsed_tools': list([
-      ParsedMCPTool(name='read_file', class_name='ReadFile', description='Read the complete contents of a file.', input_props={'path': ParsedProperty(python_type='str', description='Path to the file', required=True)}, output_props={'content': ParsedProperty(python_type='str', description='Content of the file', required=True)}),
-      ParsedMCPTool(name='write_file', class_name='WriteFile', description='Write content to a file.', input_props={'path': ParsedProperty(python_type='str', description='Path to the file', required=True), 'content': ParsedProperty(python_type='str', description='Content to write', required=True), 'append': ParsedProperty(python_type='bool', description='If true, append instead of overwrite', required=False)}, output_props=None),
+      ParsedMCPTool(name='read_file', class_name='ReadFile', description='Read the complete contents of a file.', input_schema_dict=' \n\nfrom typing import TypedDict\n\n\nclass ReadFileInputDict(TypedDict):\n    path: str\n    """\n    Path to the file\n    """', output_schema_model=' \n\nfrom pydantic import BaseModel\n\n\nclass ReadFileOutput(BaseModel):\n    content: str\n    """\n    Content of the file\n    """'),
+      ParsedMCPTool(name='write_file', class_name='WriteFile', description='Write content to a file.', input_schema_dict=' \n\nfrom typing import NotRequired, TypedDict\n\n\nclass WriteFileInputDict(TypedDict):\n    path: str\n    """\n    Path to the file\n    """\n    content: str\n    """\n    Content to write\n    """\n    append: NotRequired[bool]\n    """\n    If true, append instead of overwrite\n    """', output_schema_model=None),
     ]),
-  })
-# ---
-# name: test_parse_io_schema
-  dict({
-    'append': ParsedProperty(python_type='bool', description='If true, append instead of overwrite', required=False),
-    'content': ParsedProperty(python_type='str', description='Content to write', required=True),
-    'path': ParsedProperty(python_type='str', description='Path to the file', required=True),
   })
 # ---
