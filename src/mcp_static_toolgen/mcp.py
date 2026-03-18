@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import black
+import isort
 from datamodel_code_generator import (
     InputFileType,
     PythonVersion,
@@ -101,7 +102,9 @@ def generate_tool_code(
 ) -> str:
     template = env.get_template(f"{target}/mcp_tools.py.j2")
     raw_python_code = template.render(tools=tools)
-    formatted_code = black.format_str(raw_python_code, mode=black.Mode())
+    # Ruff does not support the python API or float_to_top, so we'll use isort and black
+    isorted_code = isort.code(raw_python_code, profile="black", float_to_top=True)
+    formatted_code = black.format_str(isorted_code, mode=black.Mode())
     return formatted_code
 
 

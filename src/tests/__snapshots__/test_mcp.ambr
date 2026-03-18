@@ -4,7 +4,7 @@
   # --- This is auto-generated code (DO NOT EDIT) ---
   import asyncio
   from collections.abc import AsyncIterator
-  from typing import TypedDict, Unpack
+  from typing import Annotated, NotRequired, TypedDict, Unpack
   
   from langchain_core.tools import BaseTool
   from mcp import ClientSession
@@ -14,19 +14,11 @@
   from mcp_static_toolgen.runtime.langchain import dump_safe_result, parse_result
   
   
-  from typing import TypedDict
-  
-  
   class ReadFileInputDict(TypedDict):
       path: str
       """
       Path to the file
       """
-  
-  
-  from typing import Annotated
-  
-  from pydantic import BaseModel, Field
   
   
   class ReadFileOutput(BaseModel):
@@ -67,9 +59,6 @@
           return parse_result(ReadFileOutput, result)
   
   
-  from typing import NotRequired, TypedDict
-  
-  
   class WriteFileInputDict(TypedDict):
       path: str
       """
@@ -83,11 +72,6 @@
       """
       If true, append instead of overwrite
       """
-  
-  
-  from typing import Annotated
-  
-  from pydantic import BaseModel, Field
   
   
   class WriteFileOutput(BaseModel):
@@ -145,7 +129,7 @@
       # --- This is auto-generated code (DO NOT EDIT) ---
       import asyncio
       from collections.abc import AsyncIterator
-      from typing import TypedDict, Unpack
+      from typing import NotRequired, TypedDict, Unpack
       
       from langchain_core.tools import BaseTool
       from mcp import ClientSession
@@ -155,17 +139,11 @@
       from mcp_static_toolgen.runtime.langchain import dump_safe_result, parse_result
       
       
-      from typing import TypedDict
-      
-      
       class ReadFileInputDict(TypedDict):
           path: str
           """
           Path to the file
           """
-      
-      
-      from pydantic import BaseModel
       
       
       class ReadFileOutput(BaseModel):
@@ -204,9 +182,6 @@
                   error_msg = dump_safe_result(result)
                   raise RuntimeError(f"Tool execution failed: {error_msg}")
               return parse_result(ReadFileOutput, result)
-      
-      
-      from typing import NotRequired, TypedDict
       
       
       class WriteFileInputDict(TypedDict):
