@@ -5,11 +5,9 @@ from typing import TypedDict
 from mcp.types import Tool
 
 from mcp_static_toolgen.mcp import (
-    ParsedProperty,
     ParsedTool,
     connect_and_generate,
     generate_tool_code,
-    parse_io_schema,
     parse_tools,
 )
 
@@ -52,12 +50,6 @@ mock_mcp_response: list[Tool] = [
         },
     ),
 ]
-
-
-def test_parse_io_schema(snapshot: dict[str, ParsedProperty]) -> None:
-    tool = mock_mcp_response[1]
-    parsed_input_schema = parse_io_schema(tool.inputSchema)
-    assert parsed_input_schema == snapshot
 
 
 class GenerationSnapshot(TypedDict):
